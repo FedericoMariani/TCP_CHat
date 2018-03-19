@@ -1,11 +1,14 @@
 package tcp_chat;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  *
@@ -17,7 +20,6 @@ public class Server {
         Server sr=new Server();
         sr.Accendi();
         sr.ConnessioneS();
-        sr.Comunica();
         sr.InviaS();
         sr.RiceviS();
         sr.ChiusuraS();
@@ -29,14 +31,16 @@ public class Server {
     String ip;
     String colorS;
     String messsaggeS;
-    PrintWriter out;
-    BufferedReader in;
+    DataInputStream in;
+    DataOutputStream out;
     Chat cs;
-
+    String autore;
+    
     public Server() {
         port = 2000;
         out = null;
         in = null;
+        autore="Server";
 
     }
 
@@ -48,35 +52,20 @@ public class Server {
     public void ConnessioneS() throws IOException {
         connection = server.accept();
         System.out.println("Connessione stabilita!");
-        System.out.println("Socket server: " + connection.getLocalSocketAddress());
-        System.out.println("Socket client: " + connection.getRemoteSocketAddress());
 
     }
 
     public void InviaS() throws IOException {
-
-        out = new PrintWriter(connection.getOutputStream());
-        out.println("Inviami messaggio");
+        Scanner a=new Scanner(System.in);
+        out = new DataOutputStream(connection.getOutputStream());
+        String ms = a.nextLine();
+        out.writeUTF(ms);
         out.flush();
     }
 
     public void RiceviS() throws IOException {
-
-        in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        /*String stampa=in.readLine();
-         System.out.println("Data: "+ stampa);
-         */
-        System.out.println("ciao" + (String) in.readLine());
-    }
-
-    public void Comunica() throws IOException {
-        in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        /*String stampa=in.readLine();
-         System.out.println("Il client ha detto: "+ stampa);
-         */
-        System.out.println("Il client ha detto: " + (String) in.readLine());
-        out = new PrintWriter(connection.getOutputStream());
-        out.flush();
+        in = new DataInputStream(connection.getInputStream());
+        System.out.println("Client: " + in.readUTF());
     }
 
     public void ChiusuraS() {

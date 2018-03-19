@@ -1,10 +1,13 @@
 package tcp_chat;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  *
@@ -15,19 +18,20 @@ public class Client {
     public static void main(String[] args) throws IOException {
         Client cl=new Client();
         cl.ConnessioneC();
-        cl.InviaC();
         cl.RiceviC();
+        cl.InviaC();
         cl.ChiusuraC();
     }
 
     Socket connection;
     String ip;
     int port;
-    PrintWriter out;
-    BufferedReader in;
     String colorC;
     String messaggeC;
     Chat cc;
+    String autore;
+    DataInputStream in;
+    DataOutputStream out;
 
     public Client() {
         ip = "localhost";
@@ -43,18 +47,17 @@ public class Client {
 
     public void InviaC() throws IOException {
 
-        out = new PrintWriter(connection.getOutputStream());
-        out.println("Inviami messaggio");
+        Scanner a=new Scanner(System.in);
+        out = new DataOutputStream(connection.getOutputStream());
+        String ms = a.nextLine();
+        out.writeUTF(ms);
         out.flush();
     }
 
     public void RiceviC() throws IOException {
 
-        in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        /*String stampa=in.readLine();
-         System.out.println("Data: "+ stampa);
-         */
-        System.out.println("ciao" + (String) in.readLine());
+        in = new DataInputStream(connection.getInputStream());
+        System.out.println("Server:" + in.readUTF());
     }
 
     public void ChiusuraC() {
